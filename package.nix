@@ -41,13 +41,13 @@ assert builtins.elem acceleration [
 let
   pname = "ollama";
   # don't forget to invalidate all hashes each update
-  version = "0.5.1";
+  version = "0.5.4";
 
   src = fetchFromGitHub {
     owner = "ollama";
     repo = "ollama";
     rev = "v${version}";
-    hash = "sha256-llsK/rMK1jf2uneqgon9gqtZcbC9PuCDxoYfC7Ta6PY=";
+    hash = "sha256-JyP7A1+u9Vs6ynOKDwun1qLBsjN+CVHIv39Hh2TYa2U=";
     fetchSubmodules = true;
   };
 
@@ -125,6 +125,8 @@ let
       "--suffix LD_LIBRARY_PATH : '${lib.makeLibraryPath (map lib.getLib cudaLibs)}'"
     ];
   wrapperArgs = builtins.concatStringsSep " " wrapperOptions;
+  dist_cmd = if cudaRequested then "dist_cuda" else
+             if rocmRequested then "dist_rocm" else "dist";
 
   goBuild =
     if enableCuda then buildGoModule.override { stdenv = overrideCC stdenv gcc12; } else buildGoModule;
@@ -167,11 +169,6 @@ goBuild {
     ++ lib.optionals enableCuda cudaLibs
     ++ lib.optionals stdenv.hostPlatform.isDarwin metalFrameworks;
 
-  patches = [
-    # sin-eating: ollama's build script is unable to find hipcc
-    ./rocm.patch
-  ];
-
   postPatch = ''
     # replace inaccurate version number with actual release version
     substituteInPlace version/version.go --replace-fail 0.0.0 '${version}'
@@ -186,7 +183,7 @@ goBuild {
 
   preBuild = ''
     # build llama.cpp libraries for ollama
-    make -j $NIX_BUILD_CORES
+    make ${dist_cmd} -j $NIX_BUILD_CORES
   '';
 
   postInstall = lib.optionalString stdenv.hostPlatform.isLinux ''
