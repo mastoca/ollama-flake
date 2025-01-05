@@ -125,7 +125,7 @@ let
       "--suffix LD_LIBRARY_PATH : '${lib.makeLibraryPath (map lib.getLib cudaLibs)}'"
     ];
   wrapperArgs = builtins.concatStringsSep " " wrapperOptions;
-  dist_cmd = if cudaRequested then "dist_cuda" else
+  dist_cmd = if cudaRequested then "dist_cuda_v${cudaMajorVersion}" else
              if rocmRequested then "dist_rocm" else "dist";
 
   goBuild =
