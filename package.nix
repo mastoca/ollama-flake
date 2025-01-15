@@ -1,6 +1,7 @@
 {
   lib,
   buildGoModule,
+  buildGo124Module,
   fetchFromGitHub,
   buildEnv,
   linkFarm,
@@ -41,17 +42,17 @@ assert builtins.elem acceleration [
 let
   pname = "ollama";
   # don't forget to invalidate all hashes each update
-  version = "0.5.4";
+  version = "0.5.5";
 
   src = fetchFromGitHub {
     owner = "ollama";
     repo = "ollama";
     rev = "v${version}";
-    hash = "sha256-JyP7A1+u9Vs6ynOKDwun1qLBsjN+CVHIv39Hh2TYa2U=";
+    hash = "sha256-tfq4PU+PQWw9MaBQtI/+vr3GR8be9R22c3JyM43RPwA=";
     fetchSubmodules = true;
   };
 
-  vendorHash = "sha256-xz9v91Im6xTLPzmYoVecdF7XiPKBZk3qou1SGokgPXQ=";
+  vendorHash = "sha256-1uk3Oi0n4Q39DVZe3PnZqqqmlwwoHmEolcRrib0uu4I=";
 
   validateFallback = lib.warnIf (config.rocmSupport && config.cudaSupport) (lib.concatStrings [
     "both `nixpkgs.config.rocmSupport` and `nixpkgs.config.cudaSupport` are enabled, "
@@ -129,7 +130,7 @@ let
              if rocmRequested then "dist_rocm" else "dist";
 
   goBuild =
-    if enableCuda then buildGoModule.override { stdenv = overrideCC stdenv gcc12; } else buildGoModule;
+    if enableCuda then buildGoModule.override { stdenv = overrideCC stdenv gcc12; } else buildGo124Module;
   inherit (lib) licenses platforms maintainers;
 in
 goBuild {
