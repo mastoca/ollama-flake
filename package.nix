@@ -1,7 +1,6 @@
 {
   lib,
   buildGoModule,
-  buildGo124Module,
   fetchFromGitHub,
   buildEnv,
   linkFarm,
@@ -130,7 +129,7 @@ let
              if rocmRequested then "dist_rocm" else "dist";
 
   goBuild =
-    if enableCuda then buildGoModule.override { stdenv = overrideCC stdenv gcc12; } else buildGo124Module;
+    if enableCuda then buildGoModule.override { stdenv = overrideCC stdenv gcc12; } else buildGoModule;
   inherit (lib) licenses platforms maintainers;
 in
 goBuild {
