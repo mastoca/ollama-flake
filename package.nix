@@ -186,7 +186,7 @@ goBuild {
     make ${dist_cmd} -j $NIX_BUILD_CORES
   '';
 
-  postInstall = lib.optionalString stdenv.hostPlatform.isLinux ''
+  postInstall = lib.optionalString (enableRocm || enableCuda) ''
     # copy libggml_*.so and runners into lib
     # https://github.com/ollama/ollama/blob/v0.4.4/llama/make/gpu.make#L90
     mkdir -p $out/lib
