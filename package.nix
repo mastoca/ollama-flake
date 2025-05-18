@@ -43,13 +43,13 @@ assert builtins.elem acceleration [
 let
   pname = "ollama";
   # don't forget to invalidate all hashes each update
-  version = "0.7.0";
+  version = "0.6.8";
 
   src = fetchFromGitHub {
     owner = "ollama";
     repo = "ollama";
     tag = "v${version}";
-    hash = "sha256-rkSWMGMKzs7V6jmxS3fG611Zahsyzz5kDI8L4HxQSfQ=";
+    hash = "sha256-o/pd1q7v0pC7qeOSXE+zeblUFJbyUvWWyxPp4fIW/ZE=";
     fetchSubmodules = true;
   };
 
